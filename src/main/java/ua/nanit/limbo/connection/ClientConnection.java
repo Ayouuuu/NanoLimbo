@@ -21,6 +21,8 @@ import com.grack.nanojson.JsonArray;
 import com.grack.nanojson.JsonObject;
 import com.grack.nanojson.JsonParser;
 import com.grack.nanojson.JsonParserException;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -29,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import ua.nanit.limbo.connection.pipeline.PacketDecoder;
 import ua.nanit.limbo.connection.pipeline.PacketEncoder;
 import ua.nanit.limbo.protocol.ByteMessage;
+import ua.nanit.limbo.protocol.FriendlyByteBuf;
 import ua.nanit.limbo.protocol.Packet;
 import ua.nanit.limbo.protocol.PacketSnapshot;
 import ua.nanit.limbo.protocol.packets.login.PacketDisconnect;
@@ -45,6 +48,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -115,7 +119,7 @@ public class ClientConnection extends ChannelInboundHandlerAdapter {
 
     public void handlePacket(Object packet) {
         if (packet instanceof Packet) {
-            ((Packet)packet).handle(this, server);
+            ((Packet) packet).handle(this, server);
         }
     }
 
@@ -136,6 +140,27 @@ public class ClientConnection extends ChannelInboundHandlerAdapter {
         }
 
         spawnPlayer();
+        if (PacketSnapshots.PACKET_SET_CONTAINER_SLOT != null) {
+            System.out.println("write set container!");
+            ByteBuf buffer = Unpooled.buffer();
+            FriendlyByteBuf byteMessage = new FriendlyByteBuf(buffer);
+            byteMessage.writeVarInt(22);
+            byteMessage.writeByte(0);
+            byteMessage.writeVarInt(0);
+            byteMessage.writeShort((short)36);
+            byteMessage.writeBoolean(true);
+            byteMessage.writeVarInt(1);
+            byteMessage.writeByte(1);
+            byteMessage.writeByte(0);
+
+            ByteBuf copy = byteMessage.copy();
+
+            byte[] bytes = new byte[copy.readableBytes()];
+            copy.readBytes(bytes);
+            System.out.println(Arrays.toString(bytes));
+
+            writePacket(byteMessage);
+        }
     }
 
     public void spawnPlayer() {
@@ -247,6 +272,11 @@ public class ClientConnection extends ChannelInboundHandlerAdapter {
             channel.write(packet, channel.voidPromise());
     }
 
+    public void writeAndFlush(Object packet){
+        if (isConnected())
+            channel.writeAndFlush(packet);
+    }
+
     public boolean isConnected() {
         return channel.isActive();
     }
@@ -272,7 +302,7 @@ public class ClientConnection extends ChannelInboundHandlerAdapter {
     }
 
     public void setAddress(String host) {
-        this.address = new InetSocketAddress(host, ((InetSocketAddress)this.address).getPort());
+        this.address = new InetSocketAddress(host, ((InetSocketAddress) this.address).getPort());
     }
 
     boolean checkBungeeGuardHandshake(String handshake) {
@@ -333,7 +363,7 @@ public class ClientConnection extends ChannelInboundHandlerAdapter {
             byte[] mySignature = mac.doFinal(data);
             if (!MessageDigest.isEqual(signature, mySignature))
                 return false;
-        } catch (InvalidKeyException |java.security.NoSuchAlgorithmException e) {
+        } catch (InvalidKeyException | java.security.NoSuchAlgorithmException e) {
             throw new AssertionError(e);
         }
         int version = buf.readVarInt();

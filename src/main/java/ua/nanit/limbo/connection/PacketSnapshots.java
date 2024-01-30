@@ -65,6 +65,8 @@ public final class PacketSnapshots {
     public static List<PacketSnapshot> PACKETS_EMPTY_CHUNKS;
     public static PacketSnapshot PACKET_START_WAITING_CHUNKS;
 
+    public static PacketSnapshot PACKET_SET_CONTAINER_SLOT;
+
     private PacketSnapshots() { }
 
     public static void initPackets(LimboServer server) {
@@ -146,6 +148,9 @@ public final class PacketSnapshots {
             joinMessage.setSender(UUID.randomUUID());
             PACKET_JOIN_MESSAGE = PacketSnapshot.of(joinMessage);
         }
+        PacketSetContainerSlot slot = new PacketSetContainerSlot();
+        PACKET_SET_CONTAINER_SLOT = PacketSnapshot.of(slot);
+
 
         if (server.getConfig().isUseBossBar()) {
             PacketBossBar bossBar = new PacketBossBar();

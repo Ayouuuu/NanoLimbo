@@ -185,6 +185,10 @@ public class ByteMessage extends ByteBuf {
     }
 
     public void writeCompoundTag(CompoundBinaryTag compoundTag) {
+        if (compoundTag == null){
+            writeByte(0x00);
+            return;
+        }
         try (ByteBufOutputStream stream = new ByteBufOutputStream(buf)) {
             BinaryTagIO.writer().write(compoundTag, (OutputStream) stream);
         }

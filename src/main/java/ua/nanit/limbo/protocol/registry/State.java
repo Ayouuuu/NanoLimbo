@@ -326,6 +326,10 @@ public enum State {
             clientBound.register(PacketEmptyChunk::new,
                     map(0x25, V1_20_3, V1_20_3)
             );
+            clientBound.register(
+                    PacketSetContainerSlot::new,
+                    map(0x22,V1_18,V1_18_2)
+            );
         }
     };
 
