@@ -25,6 +25,7 @@ import java.util.EnumSet;
 import java.util.UUID;
 
 /**
+ * 0x3C Player Info Update
  * This packet was very simplified and using only for ADD_PLAYER action
  */
 public class PacketPlayerInfo implements PacketOut {

@@ -22,6 +22,9 @@ import ua.nanit.limbo.protocol.NbtMessage;
 import ua.nanit.limbo.protocol.PacketOut;
 import ua.nanit.limbo.protocol.registry.Version;
 
+/**
+ * 0x6A Set Tab List Header And Footer
+ */
 public class PacketPlayerListHeader implements PacketOut {
 
     private NbtMessage header;

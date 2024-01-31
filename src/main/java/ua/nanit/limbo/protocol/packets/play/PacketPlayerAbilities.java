@@ -21,6 +21,9 @@ import ua.nanit.limbo.protocol.ByteMessage;
 import ua.nanit.limbo.protocol.PacketOut;
 import ua.nanit.limbo.protocol.registry.Version;
 
+/**
+ * 0x36 Player Abilities
+ */
 public class PacketPlayerAbilities implements PacketOut {
 
     private int flags = 0x02;

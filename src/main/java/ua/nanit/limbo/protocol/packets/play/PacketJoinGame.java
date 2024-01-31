@@ -22,6 +22,9 @@ import ua.nanit.limbo.protocol.PacketOut;
 import ua.nanit.limbo.protocol.registry.Version;
 import ua.nanit.limbo.world.DimensionRegistry;
 
+/**
+ * 0x29 Login(Play) Packet
+ */
 public class PacketJoinGame implements PacketOut {
 
     private int entityId;

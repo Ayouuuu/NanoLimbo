@@ -27,6 +27,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 import org.jetbrains.annotations.NotNull;
 import ua.nanit.limbo.connection.pipeline.PacketDecoder;
 import ua.nanit.limbo.connection.pipeline.PacketEncoder;
@@ -141,17 +142,25 @@ public class ClientConnection extends ChannelInboundHandlerAdapter {
 
         spawnPlayer();
         if (PacketSnapshots.PACKET_SET_CONTAINER_SLOT != null) {
+
             System.out.println("write set container!");
             ByteBuf buffer = Unpooled.buffer();
-            FriendlyByteBuf byteMessage = new FriendlyByteBuf(buffer);
+            ByteMessage byteMessage = new ByteMessage(buffer);
             byteMessage.writeVarInt(22);
             byteMessage.writeByte(0);
             byteMessage.writeVarInt(0);
-            byteMessage.writeShort((short)36);
+            byteMessage.writeShort((short) 37);
             byteMessage.writeBoolean(true);
-            byteMessage.writeVarInt(1);
+            byteMessage.writeVarInt(793);
             byteMessage.writeByte(1);
             byteMessage.writeByte(0);
+
+//            CompoundBinaryTag tag = CompoundBinaryTag.builder().build();
+//            tag.putInt("Damage", 0);
+//            System.out.println(tag.get("Damage"));
+//            System.out.println(tag.keySet());
+//            byteMessage.writeCompoundTag(tag);
+
 
             ByteBuf copy = byteMessage.copy();
 
@@ -272,7 +281,7 @@ public class ClientConnection extends ChannelInboundHandlerAdapter {
             channel.write(packet, channel.voidPromise());
     }
 
-    public void writeAndFlush(Object packet){
+    public void writeAndFlush(Object packet) {
         if (isConnected())
             channel.writeAndFlush(packet);
     }

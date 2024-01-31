@@ -85,6 +85,7 @@ public final class DimensionRegistry {
     public void load(String def) throws IOException {
         codec_1_16 = readCodecFile("/dimension/codec_1_16.snbt");
         codec_1_18_2 = readCodecFile("/dimension/codec_1_18_2.snbt");
+        System.out.println("codec_1_18_2: " + codec_1_18_2.keySet());
         codec_1_19 = readCodecFile("/dimension/codec_1_19.snbt");
         codec_1_19_1 = readCodecFile("/dimension/codec_1_19_1.snbt");
         codec_1_19_4 = readCodecFile("/dimension/codec_1_19_4.snbt");
