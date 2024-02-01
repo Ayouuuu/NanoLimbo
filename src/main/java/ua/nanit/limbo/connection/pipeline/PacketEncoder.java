@@ -23,9 +23,12 @@ import io.netty.handler.codec.MessageToByteEncoder;
 import ua.nanit.limbo.protocol.ByteMessage;
 import ua.nanit.limbo.protocol.Packet;
 import ua.nanit.limbo.protocol.PacketSnapshot;
+import ua.nanit.limbo.protocol.packets.play.PacketSetContainerSlot;
 import ua.nanit.limbo.protocol.registry.State;
 import ua.nanit.limbo.protocol.registry.Version;
 import ua.nanit.limbo.server.Logger;
+
+import java.util.Arrays;
 
 public class PacketEncoder extends MessageToByteEncoder<Packet> {
 
@@ -45,7 +48,7 @@ public class PacketEncoder extends MessageToByteEncoder<Packet> {
         int packetId;
 
         if (packet instanceof PacketSnapshot) {
-            packetId = registry.getPacketId(((PacketSnapshot)packet).getWrappedPacket().getClass());
+            packetId = registry.getPacketId(((PacketSnapshot) packet).getWrappedPacket().getClass());
         } else {
             packetId = registry.getPacketId(packet.getClass());
         }
@@ -54,14 +57,18 @@ public class PacketEncoder extends MessageToByteEncoder<Packet> {
             Logger.warning("Undefined packet class: %s[0x%s] (%d bytes)", packet.getClass().getName(), Integer.toHexString(packetId), msg.readableBytes());
             return;
         }
-
         msg.writeVarInt(packetId);
 
         try {
             packet.encode(msg, version);
 
-            if (Logger.getLevel() >= Logger.Level.DEBUG.getIndex()) {
-                Logger.debug("Sending %s[0x%s] packet (%d bytes)", packet.toString(), Integer.toHexString(packetId), msg.readableBytes());
+            if (packetId == 22){
+                ByteBuf copy = msg.copy();
+                byte[] bytes = new byte[copy.readableBytes()];
+                copy.readBytes(bytes);
+                System.out.println(String.format("Sending %s[0x%s] packet (%d bytes)", packet.toString(), Integer.toHexString(packetId), msg.readableBytes()));
+                System.out.println(Arrays.toString(bytes));
+//                Logger.debug();
             }
         } catch (Exception e) {
             Logger.error("Cannot encode packet 0x%s: %s", Integer.toHexString(packetId), e.getMessage());

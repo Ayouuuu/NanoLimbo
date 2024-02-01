@@ -148,7 +148,7 @@ public final class PacketSnapshots {
             joinMessage.setSender(UUID.randomUUID());
             PACKET_JOIN_MESSAGE = PacketSnapshot.of(joinMessage);
         }
-        PacketSetContainerSlot slot = new PacketSetContainerSlot();
+        PacketSetContainerSlot slot = new PacketSetContainerSlot(36);
         PACKET_SET_CONTAINER_SLOT = PacketSnapshot.of(slot);
 
 

@@ -1,6 +1,8 @@
 {
-    "present": true,
-    "itemId": 1,
-    "itemCount": 1,
-    "nbtData": {}
+    "id": "minecraft:stone",
+    "Count": 1,
+    "Damage": 0,
+    "display": {
+        "Name": [{"text":"点击返回大厅","color":"green","bold":true,"italic":false,"underlined":false,"strikethrough":false,"obfuscated":false}]
+    }
 }

@@ -37,6 +37,7 @@ import ua.nanit.limbo.protocol.Packet;
 import ua.nanit.limbo.protocol.PacketSnapshot;
 import ua.nanit.limbo.protocol.packets.login.PacketDisconnect;
 import ua.nanit.limbo.protocol.packets.play.PacketKeepAlive;
+import ua.nanit.limbo.protocol.packets.play.PacketSetContainerSlot;
 import ua.nanit.limbo.protocol.registry.State;
 import ua.nanit.limbo.protocol.registry.Version;
 import ua.nanit.limbo.server.LimboServer;
@@ -141,35 +142,6 @@ public class ClientConnection extends ChannelInboundHandlerAdapter {
         }
 
         spawnPlayer();
-        if (PacketSnapshots.PACKET_SET_CONTAINER_SLOT != null) {
-
-            System.out.println("write set container!");
-            ByteBuf buffer = Unpooled.buffer();
-            ByteMessage byteMessage = new ByteMessage(buffer);
-            byteMessage.writeVarInt(22);
-            byteMessage.writeByte(0);
-            byteMessage.writeVarInt(0);
-            byteMessage.writeShort((short) 37);
-            byteMessage.writeBoolean(true);
-            byteMessage.writeVarInt(793);
-            byteMessage.writeByte(1);
-            byteMessage.writeByte(0);
-
-//            CompoundBinaryTag tag = CompoundBinaryTag.builder().build();
-//            tag.putInt("Damage", 0);
-//            System.out.println(tag.get("Damage"));
-//            System.out.println(tag.keySet());
-//            byteMessage.writeCompoundTag(tag);
-
-
-            ByteBuf copy = byteMessage.copy();
-
-            byte[] bytes = new byte[copy.readableBytes()];
-            copy.readBytes(bytes);
-            System.out.println(Arrays.toString(bytes));
-
-            writePacket(byteMessage);
-        }
     }
 
     public void spawnPlayer() {
@@ -209,6 +181,14 @@ public class ClientConnection extends ChannelInboundHandlerAdapter {
 
             if (PacketSnapshots.PACKET_HEADER_AND_FOOTER != null && clientVersion.moreOrEqual(Version.V1_8))
                 writePacket(PacketSnapshots.PACKET_HEADER_AND_FOOTER);
+
+            if (PacketSnapshots.PACKET_SET_CONTAINER_SLOT != null) {
+                for (int i = 0; i < 45; i++) {
+                    PacketSetContainerSlot packet = new PacketSetContainerSlot(i);
+                    packet.incrementStateId();
+                    writePacket(packet);
+                }
+            }
 
             if (clientVersion.moreOrEqual(Version.V1_20_3)) {
                 writePacket(PacketSnapshots.PACKET_START_WAITING_CHUNKS);
@@ -277,8 +257,9 @@ public class ClientConnection extends ChannelInboundHandlerAdapter {
     }
 
     public void writePacket(Object packet) {
-        if (isConnected())
+        if (isConnected()){
             channel.write(packet, channel.voidPromise());
+        }
     }
 
     public void writeAndFlush(Object packet) {

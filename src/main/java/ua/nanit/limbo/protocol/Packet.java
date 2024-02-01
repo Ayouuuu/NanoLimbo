@@ -21,6 +21,8 @@ import ua.nanit.limbo.connection.ClientConnection;
 import ua.nanit.limbo.protocol.registry.Version;
 import ua.nanit.limbo.server.LimboServer;
 
+import java.io.IOException;
+
 public interface Packet {
 
     void encode(ByteMessage msg, Version version);
